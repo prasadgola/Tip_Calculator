@@ -3,6 +3,7 @@ package com.example.tipcalculator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
@@ -38,13 +39,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
+
+
 @Composable
 fun TipTimeScreen() {
 
     var amountInput by remember { mutableStateOf("") }
-
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount)
+
+    var tipInput by remember { mutableStateOf("") }
+    val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
+    val tip = calculateTip(amount, tipPercent)
 
     Column(
         modifier = Modifier.padding(32.dp),
@@ -56,8 +62,15 @@ fun TipTimeScreen() {
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         EditNumberField(
+            label = R.string.bill_ammount,
             value = amountInput,
             onValueChange = { amountInput = it }
+        )
+        Spacer(Modifier.height(24.dp))
+        EditNumberField(
+            label = R.string.how_was_the_service,
+            value = tipInput,
+            onValueChange = {tipInput = it}
         )
         Spacer(Modifier.height(24.dp))
         Text(
@@ -69,6 +82,10 @@ fun TipTimeScreen() {
     }
 }
 
+
+
+
+
 private fun calculateTip(
     amount: Double,
     tipPercent: Double = 15.0
@@ -78,20 +95,30 @@ private fun calculateTip(
 }
 
 
+
+
 @Composable
 fun EditNumberField(
+    @StringRes label: Int,
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     TextField(
         value = value,
         onValueChange = onValueChange,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text(stringResource(R.string.bill_ammount)) }
+        label = { Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(id = label))
+        }
     )
 }
+
+
+
+
 
 @Preview(showBackground = true)
 @Composable
